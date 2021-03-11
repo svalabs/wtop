@@ -1,5 +1,5 @@
 build/
-data/
+data/pg/
 # Logs
 logs
 *.log
