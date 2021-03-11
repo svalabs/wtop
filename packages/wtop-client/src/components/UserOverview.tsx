@@ -98,7 +98,6 @@ const UserOverview = (): React.ReactElement => {
       }),
     },
   ];
-  console.log(graphData);
 
   return (
     <AppPage>
@@ -159,7 +158,6 @@ const UserOverview = (): React.ReactElement => {
               tickSize: 5,
               tickPadding: 5,
               format: (data) => {
-                console.log(data);
                 return moment(data).format("HH:mm:ss");
               },
             }}
