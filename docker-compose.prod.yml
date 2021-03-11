@@ -6,7 +6,7 @@ services:
       - .env
     volumes:
     - ./data/pg:/var/lib/postgresql/data
-  server:
+  graphql:
     build: ./packages/wtop-server
     image: wtop-server
     env_file:
@@ -15,3 +15,19 @@ services:
       - db
     links:
       - db
+  nginx:
+    build:
+      context: ./packages/wtop-client
+      args:
+        - WTOP_HOSTNAME=${WTOP_HOSTNAME}
+        - NODE_ENV=production
+    image: wtop-client
+    env_file: ./.env
+    command: /bin/bash -c "envsubst '$WTOP_HOSTNAME' < /etc/nginx/conf.d/app.template > /etc/nginx/conf.d/app.conf && nginx -g 'daemon off;'"
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+    depends_on:
+      - db
+      - graphql
+    ports:
+      - 80:80

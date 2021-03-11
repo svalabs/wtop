@@ -107,6 +107,7 @@ async function main() {
             update.progress = msg.progress;
 
             update.save().then(async () => {
+              console.log(update);
               const viewEntry = await ProgressEntryView.findOne({
                 where: {
                   user: update.user,
