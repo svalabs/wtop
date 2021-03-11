@@ -26,7 +26,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const CourseList = (): React.ReactElement => {
-  const { data } = useGetCoursesQuery();
+  const { data } = useGetCoursesQuery({
+    fetchPolicy: "no-cache",
+  });
   const classes = useStyles();
   const list =
     data?.courses.map(
