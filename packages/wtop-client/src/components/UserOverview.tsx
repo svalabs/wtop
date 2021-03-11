@@ -73,7 +73,7 @@ const UserOverview = (): React.ReactElement => {
       lesson,
       uuid,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
   if (!data || error) {

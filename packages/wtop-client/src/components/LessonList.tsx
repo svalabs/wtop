@@ -36,7 +36,7 @@ const LessonList = (): React.ReactElement => {
     variables: {
       course: match.params.course,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
   const list =

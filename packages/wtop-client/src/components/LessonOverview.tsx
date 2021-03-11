@@ -110,7 +110,7 @@ const LessonOverview = (): React.ReactElement => {
       course: match.params.course,
       lesson: match.params.lesson,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
   subscribeToMore({

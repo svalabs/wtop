@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CourseList = (): React.ReactElement => {
   const { data } = useGetCoursesQuery({
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
   const classes = useStyles();
   const list =
