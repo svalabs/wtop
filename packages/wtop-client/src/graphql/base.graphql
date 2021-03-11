@@ -1,0 +1,41 @@
+query getCourses {
+    courses: getCourses
+}
+
+query getProgress($course: String!, $lesson: String!) {
+    progress: getProgress(course: $course, lesson: $lesson) {
+        user
+        progress
+        userName
+        isFinished
+    }
+}
+
+query getUserData($course: String!, $lesson: String!, $uuid: String!) {
+    progress: getProgressByUser(course: $course, lesson: $lesson, uuid: $uuid) {
+        progress
+        createdAt
+    }
+    userName: getUserName(course: $course, lesson: $lesson, uuid: $uuid)
+    otherLessons: getLessonsByUser(uuid: $uuid) {
+        lesson
+        course
+    }
+}
+
+subscription OnProgressUpdate($course: String!, $lesson: String!) {
+    courseSubscription(course: $course, lesson: $lesson){
+        user
+        progress
+        userName
+        isFinished
+    }
+}
+
+query getCourses {
+    courses: getCourses
+}
+
+query getLessons($course: String!) {
+    lessons: getLessons(course: $course)
+}
