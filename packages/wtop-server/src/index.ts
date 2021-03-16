@@ -43,6 +43,10 @@ class ClientUpdate {
   @IsString()
   @IsDefined()
   lesson!: string;
+
+  @IsString()
+  @IsDefined()
+  course!: string;
 }
 
 async function main() {
@@ -103,7 +107,7 @@ async function main() {
             update.user = msg.userId;
             update.userName = msg.userName;
             update.lesson = msg.lesson;
-            update.course = 'main';
+            update.course = msg.course;
             update.progress = msg.progress;
 
             update.save().then(async () => {
