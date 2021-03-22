@@ -18,11 +18,17 @@ import LessonOverview from "./components/LessonOverview";
 import UserOverview from "./components/UserOverview";
 
 export const httpLink = createHttpLink({
-  uri: `https://${process.env.REACT_APP_WTOP_HOSTNAME}/graphql`,
+  uri:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3030/graphql"
+      : `https://${process.env.REACT_APP_WTOP_HOSTNAME}/graphql`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${process.env.REACT_APP_WTOP_HOSTNAME}/graphql`,
+  uri:
+    process.env.NODE_ENV === "development"
+      ? "ws://localhost:3030/graphql"
+      : `wss://${process.env.REACT_APP_WTOP_HOSTNAME}/graphql`,
   options: {
     reconnect: true,
   },

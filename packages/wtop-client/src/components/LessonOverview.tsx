@@ -42,7 +42,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardContainer: {
       display: "flex",
-
+      height: "100%",
+      flexWrap: "wrap",
       margin: theme.spacing(5),
     },
     card: {

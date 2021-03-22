@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      height: "100%",
     },
     title: {
       flexGrow: 1,
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
     offset: theme.mixins.toolbar,
     content: {
       marginTop: theme.spacing(1),
+      height: "100%",
     },
   })
 );
