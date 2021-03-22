@@ -141,8 +141,8 @@ async function main() {
 
     console.log(request.url);
     if (pathname === '/progress') {
-      wsServer.handleUpgrade(request, socket, head, (socket) => {
-        wsServer.emit('connection', socket, request);
+      wsServer.handleUpgrade(request, socket, head, (s) => {
+        wsServer.emit('connection', s, request);
       });
     } else if (pathname === '/graphql') {
       apolloListener(request, socket, head);
