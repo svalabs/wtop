@@ -1,8 +1,10 @@
 import {
   createStyles,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   makeStyles,
   Paper,
@@ -12,6 +14,7 @@ import {
 import FolderIcon from "@material-ui/icons/Folder";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,18 +44,28 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+export interface DeleteFunc {
+  (id: string): Promise<void>;
+}
+
 export interface IDataListEntry {
   label: string;
   icon?: React.ReactElement;
   link: string;
+  id: string;
 }
 
 export interface DataListProps {
   title: string;
   data: Array<IDataListEntry>;
+  onDelete?: DeleteFunc;
 }
 
-const DataList = ({ title, data }: DataListProps): React.ReactElement => {
+const DataList = ({
+  title,
+  data,
+  onDelete,
+}: DataListProps): React.ReactElement => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -63,7 +76,7 @@ const DataList = ({ title, data }: DataListProps): React.ReactElement => {
           {title}
         </Typography>
         <List component="nav">
-          {data.map(({ label, icon, link }, i) => {
+          {data.map(({ label, icon, link, id }, i) => {
             return (
               <ListItem
                 button
@@ -74,6 +87,19 @@ const DataList = ({ title, data }: DataListProps): React.ReactElement => {
               >
                 <ListItemIcon>{icon || <FolderIcon />}</ListItemIcon>
                 <ListItemText primary={label} />
+                {onDelete && (
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={async () => {
+                        await onDelete(id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                )}
               </ListItem>
             );
           })}

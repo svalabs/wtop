@@ -19,12 +19,19 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   purgeCourse: Scalars['Boolean'];
+  purgeLesson: Scalars['Boolean'];
   purgeStudent: Scalars['Boolean'];
 };
 
 
 export type MutationPurgeCourseArgs = {
   course: Scalars['String'];
+};
+
+
+export type MutationPurgeLessonArgs = {
+  course: Scalars['String'];
+  lesson: Scalars['String'];
 };
 
 
@@ -55,6 +62,7 @@ export type ProgressEntryView = {
 
 export type Query = {
   __typename?: 'Query';
+  getConnectedUsers: Scalars['Int'];
   getCourses: Array<Scalars['String']>;
   getLessons: Array<Scalars['String']>;
   getLessonsByUser: Array<UserLesson>;
@@ -96,6 +104,7 @@ export type QueryGetUserNameArgs = {
 export type Subscription = {
   __typename?: 'Subscription';
   courseSubscription: ProgressEntryView;
+  userSubscription: Scalars['Int'];
 };
 
 
@@ -167,6 +176,22 @@ export type OnProgressUpdateSubscription = (
   ) }
 );
 
+export type OnUserConnectSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnUserConnectSubscription = (
+  { __typename?: 'Subscription' }
+  & { users: Subscription['userSubscription'] }
+);
+
+export type GetConnectedUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetConnectedUsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Query['getConnectedUsers'] }
+);
+
 export type GetLessonsQueryVariables = Exact<{
   course: Scalars['String'];
 }>;
@@ -175,6 +200,27 @@ export type GetLessonsQueryVariables = Exact<{
 export type GetLessonsQuery = (
   { __typename?: 'Query' }
   & { lessons: Query['getLessons'] }
+);
+
+export type DeleteCourseMutationVariables = Exact<{
+  course: Scalars['String'];
+}>;
+
+
+export type DeleteCourseMutation = (
+  { __typename?: 'Mutation' }
+  & { status: Mutation['purgeCourse'] }
+);
+
+export type DeleteLessonMutationVariables = Exact<{
+  course: Scalars['String'];
+  lesson: Scalars['String'];
+}>;
+
+
+export type DeleteLessonMutation = (
+  { __typename?: 'Mutation' }
+  & { status: Mutation['purgeLesson'] }
 );
 
 
@@ -326,6 +372,65 @@ export function useOnProgressUpdateSubscription(baseOptions: Apollo.Subscription
       }
 export type OnProgressUpdateSubscriptionHookResult = ReturnType<typeof useOnProgressUpdateSubscription>;
 export type OnProgressUpdateSubscriptionResult = Apollo.SubscriptionResult<OnProgressUpdateSubscription>;
+export const OnUserConnectDocument = gql`
+    subscription OnUserConnect {
+  users: userSubscription
+}
+    `;
+
+/**
+ * __useOnUserConnectSubscription__
+ *
+ * To run a query within a React component, call `useOnUserConnectSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnUserConnectSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnUserConnectSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOnUserConnectSubscription(baseOptions?: Apollo.SubscriptionHookOptions<OnUserConnectSubscription, OnUserConnectSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OnUserConnectSubscription, OnUserConnectSubscriptionVariables>(OnUserConnectDocument, options);
+      }
+export type OnUserConnectSubscriptionHookResult = ReturnType<typeof useOnUserConnectSubscription>;
+export type OnUserConnectSubscriptionResult = Apollo.SubscriptionResult<OnUserConnectSubscription>;
+export const GetConnectedUsersDocument = gql`
+    query getConnectedUsers {
+  users: getConnectedUsers
+}
+    `;
+
+/**
+ * __useGetConnectedUsersQuery__
+ *
+ * To run a query within a React component, call `useGetConnectedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConnectedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConnectedUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetConnectedUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetConnectedUsersQuery, GetConnectedUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConnectedUsersQuery, GetConnectedUsersQueryVariables>(GetConnectedUsersDocument, options);
+      }
+export function useGetConnectedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConnectedUsersQuery, GetConnectedUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConnectedUsersQuery, GetConnectedUsersQueryVariables>(GetConnectedUsersDocument, options);
+        }
+export type GetConnectedUsersQueryHookResult = ReturnType<typeof useGetConnectedUsersQuery>;
+export type GetConnectedUsersLazyQueryHookResult = ReturnType<typeof useGetConnectedUsersLazyQuery>;
+export type GetConnectedUsersQueryResult = Apollo.QueryResult<GetConnectedUsersQuery, GetConnectedUsersQueryVariables>;
 export const GetLessonsDocument = gql`
     query getLessons($course: String!) {
   lessons: getLessons(course: $course)
@@ -359,3 +464,66 @@ export function useGetLessonsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetLessonsQueryHookResult = ReturnType<typeof useGetLessonsQuery>;
 export type GetLessonsLazyQueryHookResult = ReturnType<typeof useGetLessonsLazyQuery>;
 export type GetLessonsQueryResult = Apollo.QueryResult<GetLessonsQuery, GetLessonsQueryVariables>;
+export const DeleteCourseDocument = gql`
+    mutation deleteCourse($course: String!) {
+  status: purgeCourse(course: $course)
+}
+    `;
+export type DeleteCourseMutationFn = Apollo.MutationFunction<DeleteCourseMutation, DeleteCourseMutationVariables>;
+
+/**
+ * __useDeleteCourseMutation__
+ *
+ * To run a mutation, you first call `useDeleteCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCourseMutation, { data, loading, error }] = useDeleteCourseMutation({
+ *   variables: {
+ *      course: // value for 'course'
+ *   },
+ * });
+ */
+export function useDeleteCourseMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCourseMutation, DeleteCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCourseMutation, DeleteCourseMutationVariables>(DeleteCourseDocument, options);
+      }
+export type DeleteCourseMutationHookResult = ReturnType<typeof useDeleteCourseMutation>;
+export type DeleteCourseMutationResult = Apollo.MutationResult<DeleteCourseMutation>;
+export type DeleteCourseMutationOptions = Apollo.BaseMutationOptions<DeleteCourseMutation, DeleteCourseMutationVariables>;
+export const DeleteLessonDocument = gql`
+    mutation deleteLesson($course: String!, $lesson: String!) {
+  status: purgeLesson(course: $course, lesson: $lesson)
+}
+    `;
+export type DeleteLessonMutationFn = Apollo.MutationFunction<DeleteLessonMutation, DeleteLessonMutationVariables>;
+
+/**
+ * __useDeleteLessonMutation__
+ *
+ * To run a mutation, you first call `useDeleteLessonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLessonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLessonMutation, { data, loading, error }] = useDeleteLessonMutation({
+ *   variables: {
+ *      course: // value for 'course'
+ *      lesson: // value for 'lesson'
+ *   },
+ * });
+ */
+export function useDeleteLessonMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLessonMutation, DeleteLessonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLessonMutation, DeleteLessonMutationVariables>(DeleteLessonDocument, options);
+      }
+export type DeleteLessonMutationHookResult = ReturnType<typeof useDeleteLessonMutation>;
+export type DeleteLessonMutationResult = Apollo.MutationResult<DeleteLessonMutation>;
+export type DeleteLessonMutationOptions = Apollo.BaseMutationOptions<DeleteLessonMutation, DeleteLessonMutationVariables>;

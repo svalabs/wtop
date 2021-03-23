@@ -16,6 +16,7 @@ import CourseList from "./components/CourseList";
 import LessonList from "./components/LessonList";
 import LessonOverview from "./components/LessonOverview";
 import UserOverview from "./components/UserOverview";
+import AppWrapper from "./components/AppWrapper";
 
 export const httpLink = createHttpLink({
   uri:
@@ -56,26 +57,30 @@ export const client = new ApolloClient({
   link: splitLink,
 });
 
-const App = (): React.ReactElement => (
-  <ApolloProvider client={client}>
-    <CssBaseline />
-    <Router>
-      <Switch>
-        <Route path="/course/:course/:lesson/:uuid">
-          <UserOverview />
-        </Route>
-        <Route path="/course/:course/:lesson">
-          <LessonOverview />
-        </Route>
-        <Route path="/course/:course">
-          <LessonList />
-        </Route>
-        <Route path="/">
-          <CourseList />
-        </Route>
-      </Switch>
-    </Router>
-  </ApolloProvider>
-);
+const App = (): React.ReactElement => {
+  return (
+    <ApolloProvider client={client}>
+      <CssBaseline />
+      <AppWrapper>
+        <Router>
+          <Switch>
+            <Route path="/course/:course/:lesson/:uuid">
+              <UserOverview />
+            </Route>
+            <Route path="/course/:course/:lesson">
+              <LessonOverview />
+            </Route>
+            <Route path="/course/:course">
+              <LessonList />
+            </Route>
+            <Route path="/">
+              <CourseList />
+            </Route>
+          </Switch>
+        </Router>
+      </AppWrapper>
+    </ApolloProvider>
+  );
+};
 
 export default App;

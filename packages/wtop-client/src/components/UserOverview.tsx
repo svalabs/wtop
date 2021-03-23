@@ -85,6 +85,7 @@ const UserOverview = (): React.ReactElement => {
       return {
         link: `/course/${e.course}/${e.lesson}/${uuid}`,
         label: `${e.course} / ${e.lesson}`,
+        id: "",
       };
     });
   const graphData: Serie[] = [

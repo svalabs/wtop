@@ -1,15 +1,19 @@
-import { useGetCoursesQuery } from "../generated/graphql";
-import React from "react";
+import {
+  useDeleteCourseMutation,
+  useGetCoursesQuery,
+} from "../generated/graphql";
+import React, { useState } from "react";
 import DataList, { IDataListEntry } from "./DataList";
 import AppPage from "./AppPage";
 import {
   Breadcrumbs,
   createStyles,
+  Link,
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import LinkRouter from "./LinkRouter";
 import HomeIcon from "@material-ui/icons/Home";
+import DeleteDialog from "./DeleteDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,12 +25,13 @@ const useStyles = makeStyles((theme: Theme) =>
     link: {
       display: "flex",
       alignItems: "center",
+      cursor: "pointer",
     },
   })
 );
 
 const CourseList = (): React.ReactElement => {
-  const { data } = useGetCoursesQuery({
+  const { data, refetch } = useGetCoursesQuery({
     fetchPolicy: "network-only",
   });
   const classes = useStyles();
@@ -36,20 +41,63 @@ const CourseList = (): React.ReactElement => {
         return {
           label: course,
           link: `/course/${course}`,
+          id: course,
         };
       }
     ) || [];
+
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState<string | null>(null);
+
+  const handleClickOpen = (id: string) => {
+    setCurrent(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCurrent(null);
+  };
+
+  const [deleteCourse] = useDeleteCourseMutation();
 
   return (
     <AppPage>
       <>
         <Breadcrumbs aria-label="breadcrumb">
-          <LinkRouter color="inherit" to={"/"} className={classes.link}>
+          <Link
+            onClick={async () => {
+              await refetch();
+            }}
+            color="inherit"
+            className={classes.link}
+          >
             <HomeIcon className={classes.icon} />
             Courses
-          </LinkRouter>
+          </Link>
         </Breadcrumbs>
-        <DataList title={"Available courses"} data={list} />
+        <DataList
+          title={"Available courses"}
+          data={list}
+          onDelete={async (id) => {
+            handleClickOpen(id);
+          }}
+        />
+        <DeleteDialog
+          title={`Delete the course ${current}?`}
+          onDelete={async () => {
+            await deleteCourse({
+              variables: {
+                course: current as string,
+              },
+            });
+            await refetch();
+          }}
+          open={open}
+          keepMounted
+          handleClose={handleClose}
+          onClose={handleClose}
+        />
       </>
     </AppPage>
   );

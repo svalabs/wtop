@@ -21,6 +21,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import {
   OnProgressUpdateDocument,
   ProgressEntryView,
+  Subscription,
   useGetProgressQuery,
 } from "../generated/graphql";
 
@@ -123,7 +124,7 @@ const LessonOverview = (): React.ReactElement => {
     updateQuery: (prev, { subscriptionData }) => {
       if (!subscriptionData.data) return prev;
 
-      const update: ProgressUpdate = (subscriptionData.data as any)
+      const update: ProgressUpdate = ((subscriptionData.data as unknown) as Subscription)
         .courseSubscription;
 
       const oldData = prev.progress.findIndex((e) => e.user === update.user);

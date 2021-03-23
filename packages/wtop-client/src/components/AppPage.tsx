@@ -1,23 +1,8 @@
 import React from "react";
-import {
-  AppBar,
-  Container,
-  createStyles,
-  makeStyles,
-  Theme,
-  Toolbar,
-  Typography,
-} from "@material-ui/core";
+import { Container, createStyles, makeStyles, Theme } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-      height: "100%",
-    },
-    title: {
-      flexGrow: 1,
-    },
     offset: theme.mixins.toolbar,
     content: {
       marginTop: theme.spacing(1),
@@ -33,18 +18,7 @@ interface AppPageProps {
 const AppPage = ({ children }: AppPageProps): React.ReactElement => {
   const classes = useStyles();
 
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-            wtop
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Container className={classes.content}>{children}</Container>
-    </div>
-  );
+  return <Container className={classes.content}>{children}</Container>;
 };
 
 export default AppPage;

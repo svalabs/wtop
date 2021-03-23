@@ -85,14 +85,24 @@ async function main() {
     schema,
     context: ({ req }) => ({
       req,
+      connections: wsServer.clients.size,
     }),
 
   });
 
   gqlServer.applyMiddleware({ app, path: GRAPHQL_PATH });
 
+  wsServer.on('error', () => {
+    console.log('User disconnected! (uncool)');
+    (async () => {
+      console.log('User disconnected!');
+      await Container.get<PubSubEngine>('pubsub').publish('connections', wsServer.clients.size);
+    })();
+  });
+
   wsServer.on('connection', (socket, request) => {
     console.log(request.headers, request.url);
+
     socket.on('message', (message) => {
       try {
         const msg = plainToClass(
@@ -142,6 +152,9 @@ async function main() {
     console.log(request.url);
     if (pathname === '/progress') {
       wsServer.handleUpgrade(request, socket, head, (s) => {
+        (async () => {
+          await Container.get<PubSubEngine>('pubsub').publish('connections', wsServer.clients.size);
+        })();
         wsServer.emit('connection', s, request);
       });
     } else if (pathname === '/graphql') {
@@ -150,6 +163,10 @@ async function main() {
       socket.destroy();
     }
   });
+
+  setInterval(async () => {
+    await Container.get<PubSubEngine>('pubsub').publish('connections', wsServer.clients.size);
+  }, 10 * 1000);
 
   // `server` is a vanilla Node.js HTTP server, so use
   // the same ws upgrade process described here:

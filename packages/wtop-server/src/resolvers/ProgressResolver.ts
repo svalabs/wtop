@@ -1,5 +1,5 @@
 import {
-  Arg, Args, ArgsType, Field, Int, Mutation, ObjectType, Query, Resolver, Root, Subscription,
+  Arg, Args, ArgsType, Ctx, Field, Int, Mutation, ObjectType, Query, Resolver, Root, Subscription,
 } from 'type-graphql';
 import { getConnection, getManager, MoreThanOrEqual } from 'typeorm';
 import ProgressEntry from '../models/ProgressEntry';
@@ -106,6 +106,18 @@ class ProgressResolver {
     return payload;
   }
 
+  @Subscription(() => Int, {
+    topics: 'connections',
+  })
+  async userSubscription(@Root() payload: number): Promise<number> {
+    return payload;
+  }
+
+  @Query(() => Int)
+  async getConnectedUsers(@Ctx() ctx: { connections: number }): Promise<number> {
+    return ctx.connections;
+  }
+
   @Query(() => [String])
   async getCourses(): Promise<Array<string>> {
     // We don't define courses as a static database entity,
@@ -122,6 +134,15 @@ class ProgressResolver {
   async purgeCourse(@Arg('course') course: string): Promise<boolean> {
     await ProgressEntry.delete({
       course,
+    });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async purgeLesson(@Arg('course') course: string, @Arg('lesson') lesson: string): Promise<boolean> {
+    await ProgressEntry.delete({
+      course,
+      lesson,
     });
     return true;
   }

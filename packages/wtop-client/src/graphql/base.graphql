@@ -32,10 +32,26 @@ subscription OnProgressUpdate($course: String!, $lesson: String!) {
     }
 }
 
+subscription OnUserConnect {
+    users: userSubscription
+}
+
+query getConnectedUsers {
+    users: getConnectedUsers
+}
+
 query getCourses {
     courses: getCourses
 }
 
 query getLessons($course: String!) {
     lessons: getLessons(course: $course)
+}
+
+mutation deleteCourse($course: String!) {
+    status: purgeCourse(course: $course)
+}
+
+mutation deleteLesson($course: String!, $lesson: String!) {
+    status: purgeLesson(course: $course, lesson: $lesson)
 }
