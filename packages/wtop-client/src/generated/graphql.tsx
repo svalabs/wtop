@@ -55,6 +55,7 @@ export type ProgressEntryView = {
   course: Scalars['String'];
   isFinished: Scalars['Boolean'];
   lesson: Scalars['String'];
+  maxProgress: Scalars['Float'];
   progress: Scalars['Float'];
   user: Scalars['String'];
   userName: Scalars['String'];
@@ -139,7 +140,7 @@ export type GetProgressQuery = (
   { __typename?: 'Query' }
   & { progress: Array<(
     { __typename?: 'ProgressEntryView' }
-    & Pick<ProgressEntryView, 'user' | 'progress' | 'userName' | 'isFinished'>
+    & Pick<ProgressEntryView, 'user' | 'progress' | 'maxProgress' | 'userName' | 'isFinished'>
   )> }
 );
 
@@ -172,7 +173,7 @@ export type OnProgressUpdateSubscription = (
   { __typename?: 'Subscription' }
   & { courseSubscription: (
     { __typename?: 'ProgressEntryView' }
-    & Pick<ProgressEntryView, 'user' | 'progress' | 'userName' | 'isFinished'>
+    & Pick<ProgressEntryView, 'user' | 'progress' | 'userName' | 'maxProgress' | 'isFinished'>
   ) }
 );
 
@@ -261,6 +262,7 @@ export const GetProgressDocument = gql`
   progress: getProgress(course: $course, lesson: $lesson) {
     user
     progress
+    maxProgress
     userName
     isFinished
   }
@@ -344,6 +346,7 @@ export const OnProgressUpdateDocument = gql`
     user
     progress
     userName
+    maxProgress
     isFinished
   }
 }

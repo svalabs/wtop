@@ -6,18 +6,18 @@ import {
   Breadcrumbs,
   Card,
   CardContent,
-  CircularProgress,
-  CircularProgressProps,
   createStyles,
   makeStyles,
   Theme,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
 import LinkRouter from "./LinkRouter";
 import HomeIcon from "@material-ui/icons/Home";
 import PeopleIcon from "@material-ui/icons/People";
 import LinkIcon from "@material-ui/icons/Link";
-import DoneIcon from "@material-ui/icons/Done";
+import AdjustIcon from "@material-ui/icons/Adjust";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import {
   OnProgressUpdateDocument,
   ProgressEntryView,
@@ -27,7 +27,7 @@ import {
 
 type ProgressUpdate = { __typename?: "ProgressEntryView" } & Pick<
   ProgressEntryView,
-  "user" | "progress" | "userName" | "isFinished"
+  "user" | "progress" | "userName" | "isFinished" | "maxProgress"
 >;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -72,32 +72,110 @@ const useStyles = makeStyles((theme: Theme) =>
     doneIcon: {
       marginRight: theme.spacing(1),
     },
+    waveShape: {
+      width: theme.spacing(15),
+      height: theme.spacing(15),
+      borderRadius: "50%",
+      overflow: "hidden",
+      position: "relative",
+      "&:after": {
+        content: "''",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        boxShadow: "inset 0px 0px 30px 0px rgba(0, 0, 0, 0.3)",
+        overflow: "hidden",
+        zIndex: 3,
+      },
+    },
+
+    "@keyframes animate": {
+      "0%": {
+        transform: "translate(-50%, -75%) rotate(0deg)",
+      },
+
+      "100%": {
+        transform: "translate(-50%, -75%) rotate(360deg)",
+      },
+    },
+    waveLabel: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      top: 0,
+      left: 0,
+      fontSize: theme.typography.h4.fontSize,
+      color: theme.palette.getContrastText("#4973ff"),
+    },
+    wave: {
+      position: "absolute",
+      top: "50%",
+      left: 0,
+      width: "200%",
+      height: "200%",
+      transform: "translate(-25%, 0)",
+      background: "#4973ff",
+      "&:after, &:before": {
+        content: "''",
+        position: "absolute",
+        width: "110%",
+        height: "100%",
+        top: 0,
+        left: "50%",
+        transform: "translate(-50%, -75%)",
+        background: "#000",
+      },
+      "&:before": {
+        borderRadius: "45%",
+        background: "rgba(179, 241, 255, 1)",
+        animation: "$animate 10s linear infinite",
+      },
+      "&:after": {
+        borderRadius: "40%",
+        background: "rgba(179, 241, 255, 0.5)",
+        animation: "$animate 10s linear infinite",
+      },
+    },
   })
 );
 
-const CircularProgressWithLabel = (
-  props: CircularProgressProps & { value: number }
-): React.ReactElement => (
-  <Box position="relative" display="inline-flex">
-    <CircularProgress variant="determinate" {...props} />
-    <Box
-      top={0}
-      left={0}
-      bottom={0}
-      right={0}
-      position="absolute"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
+type ProgressProps = {
+  value: number;
+  maxValue: number;
+};
+
+const FancyProgress = ({
+  value,
+  maxValue,
+}: ProgressProps): React.ReactElement => {
+  const classes = useStyles();
+
+  const fill = maxValue * 1.125 * -1 + 50;
+
+  return (
+    <div
+      style={{
+        position: "relative",
+      }}
     >
-      <Typography
-        variant="h5"
-        component="div"
-        color="textSecondary"
-      >{`${Math.round(props.value)}`}</Typography>
-    </Box>
-  </Box>
-);
+      <div className={classes.waveShape}>
+        <div
+          className={classes.wave}
+          style={{
+            top: `${fill}%`,
+          }}
+        />
+      </div>
+      <div className={classes.waveLabel}>{value}%</div>
+    </div>
+  );
+};
 
 const LessonOverview = (): React.ReactElement => {
   const classes = useStyles();
@@ -175,8 +253,16 @@ const LessonOverview = (): React.ReactElement => {
               <Card key={entry.user} className={classes.card}>
                 <CardContent className={classes.cardContent}>
                   <div className={classes.cardHeader}>
-                    {entry.isFinished && (
-                      <DoneIcon className={classes.doneIcon} />
+                    {entry.isFinished ? (
+                      <Tooltip title={"User has scrolled past 95%"}>
+                        <AdjustIcon className={classes.doneIcon} />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title={"User has not scrolled past 95% yet"}>
+                        <RadioButtonUncheckedIcon
+                          className={classes.doneIcon}
+                        />
+                      </Tooltip>
                     )}
                     <Typography
                       variant="h5"
@@ -194,9 +280,9 @@ const LessonOverview = (): React.ReactElement => {
                   </div>
 
                   <Box margin={"auto"}>
-                    <CircularProgressWithLabel
-                      size={100}
+                    <FancyProgress
                       value={entry.progress}
+                      maxValue={entry.maxProgress}
                     />
                   </Box>
                 </CardContent>

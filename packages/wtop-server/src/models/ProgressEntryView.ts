@@ -11,6 +11,7 @@ import ProgressEntry from './ProgressEntry';
     .addSelect('entry.user', 'user')
     .addSelect('entry.lesson', 'lesson')
     .addSelect('MAX(entry.progress) >= 95', 'isFinished')
+    .addSelect('MAX(entry.progress)', 'maxProgress')
     .addSelect('(array_agg(entry.progress ORDER BY entry.id DESC))[1]', 'progress')
     .addSelect('(array_agg(entry.userName ORDER BY entry.id DESC))[1]', 'userName')
     .addGroupBy('entry.user')
@@ -38,6 +39,10 @@ class ProgressEntryView extends BaseEntity {
   @ViewColumn()
   @Field()
   progress!: number;
+
+  @ViewColumn()
+  @Field()
+  maxProgress!: number;
 
   @ViewColumn()
   @Field()

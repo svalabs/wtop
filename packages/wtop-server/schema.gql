@@ -23,6 +23,7 @@ type ProgressEntryView {
   course: String!
   isFinished: Boolean!
   lesson: String!
+  maxProgress: Float!
   progress: Float!
   user: String!
   userName: String!

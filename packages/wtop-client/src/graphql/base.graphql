@@ -6,6 +6,7 @@ query getProgress($course: String!, $lesson: String!) {
     progress: getProgress(course: $course, lesson: $lesson) {
         user
         progress
+        maxProgress
         userName
         isFinished
     }
@@ -28,6 +29,7 @@ subscription OnProgressUpdate($course: String!, $lesson: String!) {
         user
         progress
         userName
+        maxProgress
         isFinished
     }
 }
